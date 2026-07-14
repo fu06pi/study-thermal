@@ -9,6 +9,8 @@ import { db } from "@/features/study/db";
 import type { AppearanceSettings, BackgroundKind, Subject } from "@/features/study/types";
 import { exportBackup, importBackup } from "./backup";
 
+const COLOR_PRESETS = ["#8b8cf8", "#55c6a9", "#e2a45f", "#5aa9e6", "#e879a5", "#58c7d4", "#a3a3b2", "#f07167"];
+
 export function SettingsPanel({ settings, subjects, onClose }: { settings: AppearanceSettings; subjects: Subject[]; onClose: () => void }) {
   const [message, setMessage] = useState("");
   const importRef = useRef<HTMLInputElement>(null);
@@ -31,7 +33,7 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
         </div>
 
         <SettingsGroup title="Appearance">
-          <label className="setting-row">Accent <input type="color" value={settings.accent} onChange={(event) => update({ accent: event.target.value })} /></label>
+          <div className="setting-row"><span>Accent</span><ColorPicker value={settings.accent} label="Accent color" align="right" onChange={(accent) => update({ accent })} /></div>
           <label className="setting-row">Background
             <select value={settings.backgroundKind} onChange={(event) => update({ backgroundKind: event.target.value as BackgroundKind, backgroundValue: event.target.value === "gradient" ? "linear-gradient(145deg, #11131a, #181525 48%, #0d1117)" : "" })}>
               <option value="gradient">Gradient</option><option value="image">Image</option><option value="video">Video</option><option value="lottie">Lottie JSON</option>
@@ -75,11 +77,10 @@ function SubjectRow({ subject, canDelete }: { subject: Subject; canDelete: boole
 
   return (
     <div className="grid grid-cols-[32px_1fr_80px_36px] gap-2">
-      <input
-        type="color"
+      <ColorPicker
         value={subject.color}
-        aria-label={`${subject.name} color`}
-        onChange={(event) => void db.subjects.update(subject.id, { color: event.target.value })}
+        label={`${subject.name} color`}
+        onChange={(color) => void db.subjects.update(subject.id, { color })}
       />
       <input
         value={name}
@@ -102,6 +103,59 @@ function SubjectRow({ subject, canDelete }: { subject: Subject; canDelete: boole
       >
         <Trash2 size={15} />
       </button>
+    </div>
+  );
+}
+
+function ColorPicker({ value, label, onChange, align = "left" }: { value: string; label: string; onChange: (color: string) => void; align?: "left" | "right" }) {
+  const [open, setOpen] = useState(false);
+  const [hex, setHex] = useState(value);
+  useEffect(() => setHex(value), [value]);
+  const chooseColor = (color: string) => {
+    if (!/^#[0-9a-f]{6}$/i.test(color)) {
+      setHex(value);
+      return;
+    }
+    onChange(color.toLowerCase());
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative h-9 w-8">
+      <button
+        type="button"
+        className="h-9 w-8 rounded-lg border border-white/10 shadow-inner"
+        style={{ background: value }}
+        aria-label={label}
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+      />
+      {open && (
+        <div className={`absolute top-11 z-30 w-44 rounded-xl border border-white/10 bg-[#1c1d25] p-3 shadow-2xl ${align === "right" ? "right-0" : "left-0"}`}>
+          <div className="grid grid-cols-4 gap-2">
+            {COLOR_PRESETS.map((color) => (
+              <button
+                key={color}
+                type="button"
+                className="h-7 rounded-md border border-white/10 transition hover:scale-105"
+                style={{ background: color }}
+                aria-label={`Use ${color}`}
+                onClick={() => chooseColor(color)}
+              />
+            ))}
+          </div>
+          <input
+            className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.05] px-2 py-2 text-xs uppercase text-ink outline-none focus:border-white/20"
+            value={hex}
+            aria-label={`${label} hex value`}
+            maxLength={7}
+            spellCheck={false}
+            onChange={(event) => setHex(event.target.value)}
+            onBlur={() => chooseColor(hex)}
+            onKeyDown={(event) => event.key === "Enter" && chooseColor(hex)}
+          />
+        </div>
+      )}
     </div>
   );
 }
