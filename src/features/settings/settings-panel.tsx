@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Download, Plus, Trash2, Upload, X } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/features/study/db";
 import type { AppearanceSettings, BackgroundKind, Subject } from "@/features/study/types";
 import { useTimerStore } from "@/features/timer/store";
+import { hexToHsv, hsvToHex, type HsvColor } from "@/lib/color";
 import { exportBackup, importBackup } from "./backup";
 
 export function SettingsPanel({ settings, subjects, onClose }: { settings: AppearanceSettings; subjects: Subject[]; onClose: () => void }) {
@@ -32,7 +33,7 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
         </div>
 
         <SettingsGroup title="Appearance">
-          <label className="setting-row">Accent <input type="color" value={settings.accent} onChange={(event) => update({ accent: event.target.value })} /></label>
+          <div className="setting-row"><span>Accent</span><ColorPicker value={settings.accent} label="Accent color" align="right" onChange={(accent) => update({ accent })} /></div>
           <label className="setting-row">Background
             <select value={settings.backgroundKind} onChange={(event) => update({ backgroundKind: event.target.value as BackgroundKind, backgroundValue: event.target.value === "gradient" ? "linear-gradient(145deg, #11131a, #181525 48%, #0d1117)" : "" })}>
               <option value="gradient">Gradient</option><option value="image">Image</option><option value="video">Video</option><option value="lottie">Lottie JSON</option>
@@ -78,11 +79,10 @@ function SubjectRow({ subject }: { subject: Subject }) {
 
   return (
     <div className="grid grid-cols-[32px_1fr_80px_36px] gap-2">
-      <input
-        type="color"
+      <ColorPicker
         value={subject.color}
-        aria-label={`${subject.name} color`}
-        onChange={(event) => void db.subjects.update(subject.id, { color: event.target.value })}
+        label={`${subject.name} color`}
+        onChange={(color) => void db.subjects.update(subject.id, { color })}
       />
       <input
         value={name}
@@ -104,6 +104,72 @@ function SubjectRow({ subject }: { subject: Subject }) {
       >
         <Trash2 size={15} />
       </button>
+    </div>
+  );
+}
+
+function ColorPicker({ value, label, onChange, align = "left" }: { value: string; label: string; onChange: (color: string) => void; align?: "left" | "right" }) {
+  const [open, setOpen] = useState(false);
+  const [hsv, setHsv] = useState(() => hexToHsv(value));
+  const [hex, setHex] = useState(value);
+  useEffect(() => { setHsv(hexToHsv(value)); setHex(value); }, [value]);
+
+  const commit = (next: HsvColor) => {
+    setHsv(next);
+    onChange(hsvToHex(next));
+  };
+  const pickSaturation = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.type === "pointermove" && !event.currentTarget.hasPointerCapture(event.pointerId)) return;
+    if (event.type === "pointerdown") event.currentTarget.setPointerCapture(event.pointerId);
+    const bounds = event.currentTarget.getBoundingClientRect();
+    commit({
+      hue: hsv.hue,
+      saturation: Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width)),
+      value: Math.max(0, Math.min(1, 1 - (event.clientY - bounds.top) / bounds.height)),
+    });
+  };
+  const commitHex = () => {
+    if (/^#[0-9a-f]{6}$/i.test(hex)) onChange(hex.toLowerCase());
+    else setHex(value);
+  };
+
+  return (
+    <div className="relative h-9 w-8">
+      <button type="button" className="h-9 w-8 rounded-lg border border-white/10 shadow-inner" style={{ background: value }} aria-label={label} aria-expanded={open} onClick={() => setOpen((current) => !current)} />
+      {open && (
+        <div className={`absolute top-11 z-40 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-white/10 bg-[#1c1d25] p-3 shadow-2xl ${align === "right" ? "right-0" : "left-0"}`}>
+          <div
+            className="relative h-36 w-full touch-none cursor-crosshair overflow-hidden rounded-lg"
+            style={{ backgroundColor: `hsl(${hsv.hue} 100% 50%)`, backgroundImage: "linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)" }}
+            onPointerDown={pickSaturation}
+            onPointerMove={pickSaturation}
+          >
+            <span className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow" style={{ left: `${hsv.saturation * 100}%`, top: `${(1 - hsv.value) * 100}%`, background: value }} />
+          </div>
+          <input
+            className="color-hue-slider mt-3 w-full"
+            type="range"
+            min="0"
+            max="359"
+            value={Math.round(hsv.hue)}
+            aria-label={`${label} hue`}
+            onChange={(event) => commit({ ...hsv, hue: Number(event.target.value) })}
+          />
+          <div className="mt-3 flex items-center gap-2">
+            <span className="h-8 w-8 shrink-0 rounded-lg border border-white/10" style={{ background: value }} />
+            <input
+              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/[0.05] px-2 py-2 text-xs uppercase text-ink outline-none focus:border-white/20"
+              value={hex}
+              aria-label={`${label} hex value`}
+              maxLength={7}
+              spellCheck={false}
+              onChange={(event) => setHex(event.target.value)}
+              onBlur={commitHex}
+              onKeyDown={(event) => event.key === "Enter" && commitHex()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

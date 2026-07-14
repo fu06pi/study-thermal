@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { hexToHsv, hsvToHex } from "./color.ts";
 import { completionForDay, formatDuration, getWeekDates, hourlyDistributionForDay } from "./time.ts";
 
 test("formats time and caps completion at 100 percent", () => {
@@ -23,4 +24,9 @@ test("splits sessions across hours and returns a Monday-first week", () => {
   assert.deepEqual(getWeekDates(new Date("2026-07-14T12:00:00")), [
     "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19",
   ]);
+});
+
+test("round-trips hex colors through HSV", () => {
+  assert.equal(hsvToHex(hexToHsv("#55c6a9")), "#55c6a9");
+  assert.equal(hsvToHex({ hue: 240, saturation: 1, value: 1 }), "#0000ff");
 });

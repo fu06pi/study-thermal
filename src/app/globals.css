@@ -25,12 +25,13 @@ button { cursor: pointer; }
   .setting-row select { @apply rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 text-xs text-ink outline-none; }
 }
 
-.setting-row input[type="color"] { width: 34px; height: 28px; padding: 2px; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 8px; background: transparent; }
-aside input[type="color"] { width: 32px; height: 36px; padding: 2px; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 8px; background: transparent; }
 .setting-row option, select option { background: #191a22; }
 .setting-row + input, aside input[type="text"], aside input[type="number"], aside .grid input { border: 1px solid rgb(255 255 255 / 0.08); border-radius: 10px; background: rgb(255 255 255 / 0.04); padding: 9px 10px; color: rgb(var(--ink)); outline: none; font-size: 12px; }
 .timer-digits { font-variant-numeric: tabular-nums; }
 .activity-scroll > div { min-width: max-content; }
+.color-hue-slider { appearance: none; height: 10px; border-radius: 999px; background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+.color-hue-slider::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border: 2px solid white; border-radius: 50%; background: transparent; box-shadow: 0 1px 4px rgb(0 0 0 / 0.5); }
+.color-hue-slider::-moz-range-thumb { width: 12px; height: 12px; border: 2px solid white; border-radius: 50%; background: transparent; box-shadow: 0 1px 4px rgb(0 0 0 / 0.5); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
