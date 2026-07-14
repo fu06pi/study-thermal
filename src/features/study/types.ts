@@ -1,6 +1,6 @@
 export type TimerMode = "stopwatch" | "countdown";
 export type TimerStatus = "idle" | "running" | "paused";
-export type HeatmapRange = "week" | "month" | "year";
+export type HeatmapRange = "day" | "week" | "month" | "halfYear" | "year";
 export type BackgroundKind = "gradient" | "image" | "video" | "lottie";
 
 export interface Subject {

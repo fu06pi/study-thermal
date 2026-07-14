@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { completionForDay, formatDuration } from "./time.ts";
+import { completionForDay, formatDuration, getWeekDates, hourlyDistributionForDay } from "./time.ts";
 
 test("formats time and caps completion at 100 percent", () => {
   assert.equal(formatDuration(5565), "01:32:45");
@@ -12,4 +12,15 @@ test("formats time and caps completion at 100 percent", () => {
   );
   assert.equal(result.percentage, 100);
   assert.equal(result.seconds, 7200);
+});
+
+test("splits sessions across hours and returns a Monday-first week", () => {
+  const hourly = hourlyDistributionForDay("2026-07-14", [
+    { subjectId: "math", startedAt: "2026-07-14T10:30:00", endedAt: "2026-07-14T11:30:00", durationSeconds: 3600 },
+  ]);
+  assert.equal(hourly[10], 1800);
+  assert.equal(hourly[11], 1800);
+  assert.deepEqual(getWeekDates(new Date("2026-07-14T12:00:00")), [
+    "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19",
+  ]);
 });

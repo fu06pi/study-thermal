@@ -55,3 +55,28 @@ export function getDateRange(days: number, end = new Date()): string[] {
     return localDateKey(date);
   });
 }
+
+export function getWeekDates(reference = new Date()): string[] {
+  const monday = startOfDay(reference);
+  const daysSinceMonday = (monday.getDay() + 6) % 7;
+  monday.setDate(monday.getDate() - daysSinceMonday);
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    return localDateKey(date);
+  });
+}
+
+export function hourlyDistributionForDay(date: string, sessions: StudySession[]): number[] {
+  const dayStart = new Date(`${date}T00:00:00`).getTime();
+  return Array.from({ length: 24 }, (_, hour) => {
+    const hourStart = dayStart + hour * 3_600_000;
+    const hourEnd = hourStart + 3_600_000;
+    return Math.round(sessions.reduce((seconds, session) => {
+      const sessionStart = new Date(session.startedAt).getTime();
+      const sessionEnd = sessionStart + session.durationSeconds * 1000;
+      const overlap = Math.max(0, Math.min(sessionEnd, hourEnd) - Math.max(sessionStart, hourStart));
+      return seconds + overlap / 1000;
+    }, 0));
+  });
+}
