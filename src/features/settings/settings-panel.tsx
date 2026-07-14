@@ -10,11 +10,26 @@ import type { AppearanceSettings, BackgroundKind, Subject } from "@/features/stu
 import { useTimerStore } from "@/features/timer/store";
 import { hexToHsv, hsvToHex, type HsvColor } from "@/lib/color";
 import { exportBackup, importBackup } from "./backup";
+import auroraDrift from "./lottie/aurora-drift.json";
+import breathingGrid from "./lottie/breathing-grid.json";
+import orbitalFocus from "./lottie/orbital-focus.json";
+
+const lottiePresets = [
+  { name: "Aurora", value: JSON.stringify(auroraDrift), preview: "linear-gradient(135deg, #8b8cf8, #3cd3bc, #f472b6)" },
+  { name: "Orbit", value: JSON.stringify(orbitalFocus), preview: "radial-gradient(circle, #f472b6, #8b8cf8 38%, #171923 42%)" },
+  { name: "Grid", value: JSON.stringify(breathingGrid), preview: "linear-gradient(135deg, #1c1d2d, #3cd3bc55, #8b8cf855)" },
+] as const;
 
 export function SettingsPanel({ settings, subjects, onClose }: { settings: AppearanceSettings; subjects: Subject[]; onClose: () => void }) {
   const [message, setMessage] = useState("");
   const importRef = useRef<HTMLInputElement>(null);
   const update = (changes: Partial<AppearanceSettings>) => void db.settings.update("appearance", changes);
+  const setBackgroundKind = (backgroundKind: BackgroundKind) => update({
+    backgroundKind,
+    backgroundValue: backgroundKind === "gradient"
+      ? "linear-gradient(145deg, #11131a, #181525 48%, #0d1117)"
+      : backgroundKind === "lottie" ? lottiePresets[0].value : "",
+  });
   const readBackgroundFile = (file: File | undefined) => {
     if (!file) return;
     const reader = new FileReader();
@@ -35,11 +50,21 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
         <SettingsGroup title="Appearance">
           <div className="setting-row"><span>Accent</span><ColorPicker value={settings.accent} label="Accent color" align="right" onChange={(accent) => update({ accent })} /></div>
           <label className="setting-row">Background
-            <select value={settings.backgroundKind} onChange={(event) => update({ backgroundKind: event.target.value as BackgroundKind, backgroundValue: event.target.value === "gradient" ? "linear-gradient(145deg, #11131a, #181525 48%, #0d1117)" : "" })}>
+            <select value={settings.backgroundKind} onChange={(event) => setBackgroundKind(event.target.value as BackgroundKind)}>
               <option value="gradient">Gradient</option><option value="image">Image</option><option value="video">Video</option><option value="lottie">Lottie JSON</option>
             </select>
           </label>
-          {settings.backgroundKind !== "gradient" && <label className="block rounded-xl border border-dashed border-white/10 p-4 text-center text-xs text-muted hover:border-white/20">Choose {settings.backgroundKind} file<input className="hidden" type="file" accept={settings.backgroundKind === "lottie" ? ".json,application/json" : `${settings.backgroundKind}/*`} onChange={(event) => readBackgroundFile(event.target.files?.[0])} /></label>}
+          {settings.backgroundKind === "lottie" && (
+            <div className="grid grid-cols-3 gap-2">
+              {lottiePresets.map((preset) => (
+                <button key={preset.name} type="button" className={`rounded-xl border p-2 text-[11px] transition ${settings.backgroundValue === preset.value ? "border-accent bg-accent/10 text-ink" : "border-white/10 text-muted hover:border-white/20"}`} aria-pressed={settings.backgroundValue === preset.value} onClick={() => update({ backgroundValue: preset.value })}>
+                  <span className="mb-2 block h-10 rounded-lg" style={{ background: preset.preview }} />
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {settings.backgroundKind !== "gradient" && <label className="block rounded-xl border border-dashed border-white/10 p-4 text-center text-xs text-muted hover:border-white/20">{settings.backgroundKind === "lottie" ? "Upload custom Lottie JSON" : `Choose ${settings.backgroundKind} file`}<input className="hidden" type="file" accept={settings.backgroundKind === "lottie" ? ".json,application/json" : `${settings.backgroundKind}/*`} onChange={(event) => readBackgroundFile(event.target.files?.[0])} /></label>}
           {(["brightness", "blur", "overlay"] as const).map((key) => <label key={key} className="block text-xs capitalize text-muted"><span className="mb-2 flex justify-between"><span>{key}</span><span>{settings[key]}{key === "blur" ? "px" : "%"}</span></span><input className="w-full accent-[var(--accent-hex)]" type="range" min="0" max={key === "blur" ? 24 : 100} value={settings[key]} onChange={(event) => update({ [key]: Number(event.target.value) })} /></label>)}
         </SettingsGroup>
 
