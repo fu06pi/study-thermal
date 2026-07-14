@@ -14,7 +14,7 @@ export function FocusMode({ subjects }: { subjects: Subject[] }) {
   return (
     <AnimatePresence>
       {timer.focusMode && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-black/60 px-6 backdrop-blur-2xl">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 flex flex-col items-center justify-center px-6">
           <button className="absolute right-6 top-6 rounded-xl p-3 text-muted hover:bg-white/10 hover:text-ink" onClick={() => timer.setFocusMode(false)} aria-label="Exit focus mode"><Minimize2 size={19} /></button>
           <p className="mb-5 text-sm font-medium text-muted">{subject?.name ?? "Focus"}</p>
           <div className="timer-digits text-[clamp(3rem,16vw,11rem)] font-medium tracking-[-0.075em] text-ink">{formatDuration(timer.displaySeconds)}</div>
