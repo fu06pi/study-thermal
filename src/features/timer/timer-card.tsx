@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { useReducedMotion } from "framer-motion";
+import Lottie from "lottie-react";
 import { Maximize2, Pause, Play, RotateCcw, TimerReset } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { Subject } from "@/features/study/types";
+import studyThermalFocusCore from "@/features/settings/lottie/study-thermal-focus-core.json";
 import { formatDuration } from "@/lib/time";
 import { useTimer } from "./use-timer";
 
 export function TimerCard({ subjects }: { subjects: Subject[] }) {
   const timer = useTimer();
+  const prefersReducedMotion = useReducedMotion();
   const { selectSubject, subjectId } = timer;
   useEffect(() => {
     if (subjects.length && !subjects.some((subject) => subject.id === subjectId)) {
@@ -18,8 +22,12 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
   }, [selectSubject, subjectId, subjects]);
 
   return (
-    <section className="panel flex min-h-[340px] flex-col justify-between p-5 sm:p-8">
-      <div className="flex items-center justify-between">
+    <section className="panel relative flex min-h-[340px] overflow-hidden flex-col justify-between p-5 sm:p-8">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-12 z-0 h-56 w-56 -translate-x-1/2 opacity-35 mix-blend-screen sm:h-64 sm:w-64">
+        <Lottie animationData={studyThermalFocusCore} loop={!prefersReducedMotion} autoplay={!prefersReducedMotion} />
+      </div>
+
+      <div className="relative z-10 flex items-center justify-between">
         <select
           aria-label="Current subject"
           className="rounded-lg bg-transparent text-sm font-medium text-ink outline-none"
@@ -39,7 +47,7 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
         </button>
       </div>
 
-      <div className="py-8 text-center">
+      <div className="relative z-10 py-8 text-center">
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-muted">
           {timer.mode === "stopwatch" ? "Deep work" : "Focus countdown"}
         </p>
@@ -61,7 +69,7 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="relative z-10 flex flex-wrap items-center justify-center gap-2">
         {timer.status === "running" ? (
           <Button variant="primary" onClick={() => void timer.pause()}><Pause size={16} /> Pause</Button>
         ) : (
