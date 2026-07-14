@@ -23,9 +23,11 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
         <select
           aria-label="Current subject"
           className="rounded-lg bg-transparent text-sm font-medium text-ink outline-none"
+          disabled={!subjects.length}
           value={timer.subjectId}
           onChange={(event) => timer.selectSubject(event.target.value)}
         >
+          {!subjects.length && <option>Add a subject in settings</option>}
           {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.name}</option>)}
         </select>
         <button

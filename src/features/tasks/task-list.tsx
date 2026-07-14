@@ -23,6 +23,11 @@ export function TaskList({ subjects, sessions, onManage }: { subjects: Subject[]
         </button>
       </div>
       <div className="space-y-2">
+        {!subjects.length && (
+          <button className="w-full rounded-xl border border-dashed border-white/10 p-6 text-sm text-muted transition hover:border-white/20 hover:text-ink" onClick={onManage}>
+            No subjects yet. Add your first subject.
+          </button>
+        )}
         {subjects.map((subject) => {
           const completedMinutes = Math.floor(sessions
             .filter((session) => session.subjectId === subject.id && localDateKey(session.startedAt) === today)

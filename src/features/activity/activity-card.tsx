@@ -14,7 +14,13 @@ import {
 } from "@/lib/time";
 
 const calendarDays = { month: 35, halfYear: 183, year: 365 } as const;
-const activityColors = ["#252733", "#343754", "#505486", "#6f72ba", "var(--accent-hex)"];
+const activityColors = [
+  "#252733",
+  "color-mix(in srgb, var(--accent-hex) 25%, #252733)",
+  "color-mix(in srgb, var(--accent-hex) 50%, #252733)",
+  "color-mix(in srgb, var(--accent-hex) 75%, #252733)",
+  "var(--accent-hex)",
+];
 const ranges: { value: HeatmapRange; label: string }[] = [
   { value: "day", label: "Day" },
   { value: "week", label: "Week" },
