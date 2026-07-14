@@ -29,7 +29,6 @@ button { cursor: pointer; }
 .setting-row + input, aside input[type="text"], aside input[type="number"], aside .grid input { border: 1px solid rgb(255 255 255 / 0.08); border-radius: 10px; background: rgb(255 255 255 / 0.04); padding: 9px 10px; color: rgb(var(--ink)); outline: none; font-size: 12px; }
 .timer-digits { font-variant-numeric: tabular-nums; }
 .activity-scroll > div { min-width: max-content; }
-.react-activity-calendar__legend-colors { color: rgb(var(--muted)); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

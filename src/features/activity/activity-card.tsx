@@ -14,6 +14,7 @@ import {
 } from "@/lib/time";
 
 const calendarDays = { month: 35, halfYear: 183, year: 365 } as const;
+const activityColors = ["#252733", "#343754", "#505486", "#6f72ba", "var(--accent-hex)"];
 const ranges: { value: HeatmapRange; label: string }[] = [
   { value: "day", label: "Day" },
   { value: "week", label: "Week" },
@@ -132,22 +133,29 @@ function WeekDistribution({ sessions, subjects }: { sessions: StudySession[]; su
 
 function CalendarDistribution({ range, data, tooltip }: { range: "month" | "halfYear" | "year"; data: Activity[]; tooltip: (activity: Activity) => string }) {
   return (
-    <div className="activity-scroll overflow-x-auto pb-2">
-      <ActivityCalendar
-        data={data}
-        blockMargin={4}
-        blockRadius={3}
-        blockSize={range === "year" ? 11 : range === "halfYear" ? 13 : 15}
-        colorScheme="dark"
-        fontSize={11}
-        maxLevel={4}
-        showColorLegend
-        showMonthLabels
-        showTotalCount={false}
-        showWeekdayLabels
-        theme={{ dark: ["#252733", "#343754", "#505486", "#6f72ba", "var(--accent-hex)"] }}
-        renderBlock={(block, activity) => <g>{block}<title>{tooltip(activity)}</title></g>}
-      />
-    </div>
+    <>
+      <div className="activity-scroll overflow-x-auto pb-2">
+        <ActivityCalendar
+          data={data}
+          blockMargin={4}
+          blockRadius={3}
+          blockSize={range === "year" ? 11 : range === "halfYear" ? 13 : 15}
+          colorScheme="dark"
+          fontSize={11}
+          maxLevel={4}
+          showColorLegend={false}
+          showMonthLabels
+          showTotalCount={false}
+          showWeekdayLabels
+          theme={{ dark: activityColors }}
+          renderBlock={(block, activity) => <g>{block}<title>{tooltip(activity)}</title></g>}
+        />
+      </div>
+      <div className="mt-3 flex max-w-full flex-wrap items-center justify-end gap-1.5 text-xs text-muted" aria-label="Activity intensity from less to more">
+        <span className="mr-1">Less</span>
+        {activityColors.map((color) => <span key={color} className="h-3 w-3 shrink-0 rounded-[3px]" style={{ background: color }} />)}
+        <span className="ml-1">More</span>
+      </div>
+    </>
   );
 }

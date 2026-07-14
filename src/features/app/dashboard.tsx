@@ -43,8 +43,8 @@ export function Dashboard() {
       </header>
 
       <main className="mx-auto grid w-full max-w-[1480px] gap-5 px-5 pb-10 sm:px-8 lg:grid-cols-[minmax(430px,0.88fr)_minmax(560px,1.35fr)] lg:px-10">
-        <div className="space-y-5"><TimerCard subjects={subjects} /><TaskList subjects={subjects} sessions={sessions} onManage={() => setSettingsOpen(true)} /></div>
-        <div className="space-y-5"><ActivityCard subjects={subjects} sessions={sessions} /><StatisticsCard subjects={subjects} sessions={sessions} /></div>
+        <div className="min-w-0 space-y-5"><TimerCard subjects={subjects} /><TaskList subjects={subjects} sessions={sessions} onManage={() => setSettingsOpen(true)} /></div>
+        <div className="min-w-0 space-y-5"><ActivityCard subjects={subjects} sessions={sessions} /><StatisticsCard subjects={subjects} sessions={sessions} /></div>
       </main>
 
       <FocusMode subjects={subjects} />
