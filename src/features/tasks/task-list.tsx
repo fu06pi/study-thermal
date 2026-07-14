@@ -12,7 +12,7 @@ export function TaskList({ subjects, sessions, onManage }: { subjects: Subject[]
   const today = localDateKey(new Date());
 
   return (
-    <section className="panel p-6">
+    <section className="panel p-5 sm:p-6">
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className="text-base font-semibold text-ink">Today&apos;s plan</h2>
@@ -39,12 +39,12 @@ export function TaskList({ subjects, sessions, onManage }: { subjects: Subject[]
               className={`group w-full rounded-xl border p-4 text-left transition ${selectedId === subject.id ? "border-white/15 bg-white/[0.07]" : "border-transparent hover:bg-white/[0.04]"}`}
               onClick={() => selectSubject(subject.id)}
             >
-              <div className="mb-3 flex items-center justify-between">
-                <span className="flex items-center gap-2 text-sm font-medium text-ink">
-                  <span className="h-2 w-2 rounded-full" style={{ background: subject.color }} />
-                  {subject.name}
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-ink">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: subject.color }} />
+                  <span className="truncate">{subject.name}</span>
                 </span>
-                <span className="flex items-center gap-1 text-xs text-muted">
+                <span className="flex shrink-0 items-center gap-1 text-xs text-muted">
                   {completedMinutes >= subject.dailyGoalMinutes && <CheckCircle2 size={13} className="text-accent" />}
                   {completedMinutes} / {subject.dailyGoalMinutes} min
                 </span>

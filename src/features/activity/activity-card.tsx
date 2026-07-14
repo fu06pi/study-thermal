@@ -51,17 +51,17 @@ export function ActivityCard({ subjects, sessions }: { subjects: Subject[]; sess
   };
 
   return (
-    <section className="panel overflow-hidden p-6 sm:p-7">
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <section className="panel overflow-hidden p-5 sm:p-7">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4 sm:mb-8">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Consistency</p>
           <h2 className="mt-2 text-xl font-semibold text-ink">Study activity</h2>
         </div>
-        <div className="flex max-w-full overflow-x-auto rounded-xl bg-black/20 p-1" aria-label="Activity range">
+        <div className="grid w-full grid-cols-5 rounded-xl bg-black/20 p-1 sm:flex sm:w-auto" aria-label="Activity range">
           {ranges.map((item) => (
             <button
               key={item.value}
-              className={`shrink-0 rounded-lg px-3 py-1.5 text-xs transition ${range === item.value ? "bg-white/10 text-ink" : "text-muted hover:text-ink"}`}
+              className={`min-w-0 rounded-lg px-1 py-1.5 text-[11px] transition sm:px-3 sm:text-xs ${range === item.value ? "bg-white/10 text-ink" : "text-muted hover:text-ink"}`}
               onClick={() => setRange(item.value)}
             >
               {item.label}
@@ -115,7 +115,7 @@ function DayDistribution({ sessions }: { sessions: StudySession[] }) {
 function WeekDistribution({ sessions, subjects }: { sessions: StudySession[]; subjects: Subject[] }) {
   const dates = getWeekDates();
   return (
-    <div className="overflow-x-auto pb-2">
+    <div className="mobile-scroll overflow-x-auto pb-2">
       <div className="grid min-w-[620px] grid-cols-7 gap-2">
         {dates.map((date) => {
           const day = new Date(`${date}T12:00:00`);
@@ -140,7 +140,7 @@ function WeekDistribution({ sessions, subjects }: { sessions: StudySession[]; su
 function CalendarDistribution({ range, data, tooltip }: { range: "month" | "halfYear" | "year"; data: Activity[]; tooltip: (activity: Activity) => string }) {
   return (
     <>
-      <div className="activity-scroll overflow-x-auto pb-2">
+      <div className="activity-scroll mobile-scroll overflow-x-auto pb-2">
         <ActivityCalendar
           data={data}
           blockMargin={4}

@@ -26,7 +26,7 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <motion.aside initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="h-full w-full max-w-md overflow-y-auto border-l border-white/10 bg-[#14151b]/95 p-6 shadow-2xl">
+      <motion.aside initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="h-[100dvh] w-full max-w-md overflow-y-auto bg-[#14151b]/95 p-4 shadow-2xl sm:border-l sm:border-white/10 sm:p-6">
         <div className="mb-8 flex items-center justify-between">
           <div><h2 className="text-lg font-semibold text-ink">Settings</h2><p className="mt-1 text-xs text-muted">Keep the room quiet.</p></div>
           <button className="rounded-lg p-2 text-muted hover:bg-white/5 hover:text-ink" onClick={onClose} aria-label="Close settings"><X size={18} /></button>
@@ -78,13 +78,14 @@ function SubjectRow({ subject }: { subject: Subject }) {
   };
 
   return (
-    <div className="grid grid-cols-[32px_1fr_80px_36px] gap-2">
+    <div className="grid grid-cols-[32px_minmax(0,1fr)_76px_36px] gap-2 sm:grid-cols-[32px_minmax(0,1fr)_80px_36px]">
       <ColorPicker
         value={subject.color}
         label={`${subject.name} color`}
         onChange={(color) => void db.subjects.update(subject.id, { color })}
       />
       <input
+        className="min-w-0"
         value={name}
         aria-label={`${subject.name} name`}
         onChange={(event) => setName(event.target.value)}
@@ -92,7 +93,7 @@ function SubjectRow({ subject }: { subject: Subject }) {
         onBlur={saveName}
         onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
       />
-      <label className="relative">
+      <label className="relative min-w-0">
         <input className="w-full pr-7" type="number" min="1" value={subject.dailyGoalMinutes} aria-label={`${subject.name} daily goal`} onChange={(event) => void db.subjects.update(subject.id, { dailyGoalMinutes: Math.max(1, Number(event.target.value)) })} />
         <span className="pointer-events-none absolute right-2 top-2.5 text-[10px] text-muted">min</span>
       </label>
@@ -137,7 +138,7 @@ function ColorPicker({ value, label, onChange, align = "left" }: { value: string
     <div className="relative h-9 w-8">
       <button type="button" className="h-9 w-8 rounded-lg border border-white/10 shadow-inner" style={{ background: value }} aria-label={label} aria-expanded={open} onClick={() => setOpen((current) => !current)} />
       {open && (
-        <div className={`absolute top-11 z-40 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-white/10 bg-[#1c1d25] p-3 shadow-2xl ${align === "right" ? "right-0" : "left-0"}`}>
+        <div className={`absolute top-11 z-40 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-white/10 bg-[#1c1d25] p-3 shadow-2xl ${align === "right" ? "right-0 max-[360px]:-right-8" : "left-0"}`}>
           <div
             className="relative h-36 w-full touch-none cursor-crosshair overflow-hidden rounded-lg"
             style={{ backgroundColor: `hsl(${hsv.hue} 100% 50%)`, backgroundImage: "linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)" }}

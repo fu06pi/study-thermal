@@ -54,7 +54,7 @@ export function StatisticsCard({ subjects, sessions }: { subjects: Subject[]; se
   }, [sessions, subjects]);
 
   return (
-    <section className="panel p-6 sm:p-7">
+    <section className="panel p-5 sm:p-7">
       <div className="mb-6">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">This week</p>
         <h2 className="mt-2 text-xl font-semibold text-ink">Your rhythm</h2>

@@ -18,7 +18,7 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
   }, [selectSubject, subjectId, subjects]);
 
   return (
-    <section className="panel flex min-h-[340px] flex-col justify-between p-6 sm:p-8">
+    <section className="panel flex min-h-[340px] flex-col justify-between p-5 sm:p-8">
       <div className="flex items-center justify-between">
         <select
           aria-label="Current subject"
@@ -43,7 +43,7 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-muted">
           {timer.mode === "stopwatch" ? "Deep work" : "Focus countdown"}
         </p>
-        <div className="timer-digits text-6xl font-medium tracking-[-0.07em] text-ink sm:text-7xl lg:text-[5.5rem]">
+        <div className="timer-digits text-[clamp(3rem,16vw,3.75rem)] font-medium tracking-[-0.07em] text-ink sm:text-7xl lg:text-[5.5rem]">
           {formatDuration(timer.displaySeconds)}
         </div>
         {timer.mode === "countdown" && timer.status === "idle" && (
