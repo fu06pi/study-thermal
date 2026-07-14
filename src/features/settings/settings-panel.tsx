@@ -12,12 +12,14 @@ import { hexToHsv, hsvToHex, type HsvColor } from "@/lib/color";
 import { exportBackup, importBackup } from "./backup";
 import auroraDrift from "./lottie/aurora-drift.json";
 import breathingGrid from "./lottie/breathing-grid.json";
+import midnightRain from "./lottie/midnight-rain.json";
 import orbitalFocus from "./lottie/orbital-focus.json";
 
 const lottiePresets = [
   { name: "Aurora", value: JSON.stringify(auroraDrift), preview: "linear-gradient(135deg, #8b8cf8, #3cd3bc, #f472b6)" },
   { name: "Orbit", value: JSON.stringify(orbitalFocus), preview: "radial-gradient(circle, #f472b6, #8b8cf8 38%, #171923 42%)" },
   { name: "Grid", value: JSON.stringify(breathingGrid), preview: "linear-gradient(135deg, #1c1d2d, #3cd3bc55, #8b8cf855)" },
+  { name: "Rain", value: JSON.stringify(midnightRain), preview: "repeating-linear-gradient(110deg, #111827 0 8px, #78aaf0 9px, #111827 10px 18px)" },
 ] as const;
 
 export function SettingsPanel({ settings, subjects, onClose }: { settings: AppearanceSettings; subjects: Subject[]; onClose: () => void }) {
@@ -55,7 +57,7 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
             </select>
           </label>
           {settings.backgroundKind === "lottie" && (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {lottiePresets.map((preset) => (
                 <button key={preset.name} type="button" className={`rounded-xl border p-2 text-[11px] transition ${settings.backgroundValue === preset.value ? "border-accent bg-accent/10 text-ink" : "border-white/10 text-muted hover:border-white/20"}`} aria-pressed={settings.backgroundValue === preset.value} onClick={() => update({ backgroundValue: preset.value })}>
                   <span className="mb-2 block h-10 rounded-lg" style={{ background: preset.preview }} />
