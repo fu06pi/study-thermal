@@ -2,6 +2,9 @@
 
 A calm, local-first study timer that turns consistency into a GitHub-style activity heatmap.
 
+Every visitor owns a separate subject list in their browser. Subjects, colors, daily goals, and
+history can be edited without an account and are never shared with other visitors.
+
 ## Clone and run locally
 
 ```bash

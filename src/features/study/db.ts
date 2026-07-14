@@ -20,9 +20,7 @@ class StudyThermalDatabase extends Dexie {
 export const db = new StudyThermalDatabase();
 
 export const defaultSubjects: Subject[] = [
-  { id: "statistics", name: "Statistics", color: "#8b8cf8", dailyGoalMinutes: 90, createdAt: "2026-01-01T00:00:00.000Z" },
-  { id: "japanese", name: "Japanese", color: "#55c6a9", dailyGoalMinutes: 60, createdAt: "2026-01-01T00:00:00.000Z" },
-  { id: "programming", name: "Programming", color: "#e2a45f", dailyGoalMinutes: 120, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: "study", name: "My first subject", color: "#8b8cf8", dailyGoalMinutes: 60, createdAt: "2026-01-01T00:00:00.000Z" },
 ];
 
 export const defaultAppearance: AppearanceSettings = {

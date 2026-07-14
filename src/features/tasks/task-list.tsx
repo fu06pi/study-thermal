@@ -1,12 +1,12 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, SlidersHorizontal } from "lucide-react";
 
 import type { StudySession, Subject } from "@/features/study/types";
 import { localDateKey } from "@/lib/time";
 import { useTimerStore } from "@/features/timer/store";
 
-export function TaskList({ subjects, sessions }: { subjects: Subject[]; sessions: StudySession[] }) {
+export function TaskList({ subjects, sessions, onManage }: { subjects: Subject[]; sessions: StudySession[]; onManage: () => void }) {
   const selectedId = useTimerStore((state) => state.subjectId);
   const selectSubject = useTimerStore((state) => state.selectSubject);
   const today = localDateKey(new Date());
@@ -18,7 +18,9 @@ export function TaskList({ subjects, sessions }: { subjects: Subject[]; sessions
           <h2 className="text-base font-semibold text-ink">Today&apos;s plan</h2>
           <p className="mt-1 text-xs text-muted">Choose a subject to begin</p>
         </div>
-        <span className="text-xs text-muted">{subjects.length} subjects</span>
+        <button className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs text-muted transition hover:bg-white/5 hover:text-ink" onClick={onManage}>
+          <SlidersHorizontal size={13} /> Manage
+        </button>
       </div>
       <div className="space-y-2">
         {subjects.map((subject) => {

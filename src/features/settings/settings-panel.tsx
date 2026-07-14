@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Download, Plus, Upload, X } from "lucide-react";
+import { Download, Plus, Trash2, Upload, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,8 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
         </SettingsGroup>
 
         <SettingsGroup title="Subjects">
-          {subjects.map((subject) => <SubjectRow key={subject.id} subject={subject} />)}
+          <p className="text-xs leading-5 text-muted">Names support all input methods. Changes are saved on this device.</p>
+          {subjects.map((subject) => <SubjectRow key={subject.id} subject={subject} canDelete={subjects.length > 1} />)}
           <Button className="w-full" variant="ghost" onClick={() => void db.subjects.add({ id: crypto.randomUUID(), name: "New subject", color: settings.accent, dailyGoalMinutes: 60, createdAt: new Date().toISOString() })}><Plus size={15} /> Add subject</Button>
         </SettingsGroup>
 
@@ -56,7 +57,7 @@ export function SettingsPanel({ settings, subjects, onClose }: { settings: Appea
   );
 }
 
-function SubjectRow({ subject }: { subject: Subject }) {
+function SubjectRow({ subject, canDelete }: { subject: Subject; canDelete: boolean }) {
   const [name, setName] = useState(subject.name);
   useEffect(() => setName(subject.name), [subject.name]);
   const saveName = () => {
@@ -64,9 +65,22 @@ function SubjectRow({ subject }: { subject: Subject }) {
     if (trimmedName && trimmedName !== subject.name) void db.subjects.update(subject.id, { name: trimmedName });
     else setName(subject.name);
   };
+  const deleteSubject = async () => {
+    if (!canDelete || !window.confirm(`Delete ${subject.name} and all of its study history?`)) return;
+    await db.transaction("rw", db.subjects, db.sessions, async () => {
+      await db.sessions.where("subjectId").equals(subject.id).delete();
+      await db.subjects.delete(subject.id);
+    });
+  };
 
   return (
-    <div className="grid grid-cols-[1fr_80px] gap-2">
+    <div className="grid grid-cols-[32px_1fr_80px_36px] gap-2">
+      <input
+        type="color"
+        value={subject.color}
+        aria-label={`${subject.name} color`}
+        onChange={(event) => void db.subjects.update(subject.id, { color: event.target.value })}
+      />
       <input
         value={name}
         aria-label={`${subject.name} name`}
@@ -79,6 +93,15 @@ function SubjectRow({ subject }: { subject: Subject }) {
         <input className="w-full pr-7" type="number" min="1" value={subject.dailyGoalMinutes} aria-label={`${subject.name} daily goal`} onChange={(event) => void db.subjects.update(subject.id, { dailyGoalMinutes: Math.max(1, Number(event.target.value)) })} />
         <span className="pointer-events-none absolute right-2 top-2.5 text-[10px] text-muted">min</span>
       </label>
+      <button
+        className="grid h-9 w-9 place-items-center rounded-lg text-muted transition hover:bg-red-500/10 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-30"
+        disabled={!canDelete}
+        onClick={() => void deleteSubject()}
+        aria-label={`Delete ${subject.name}`}
+        title={canDelete ? `Delete ${subject.name}` : "Keep at least one subject"}
+      >
+        <Trash2 size={15} />
+      </button>
     </div>
   );
 }

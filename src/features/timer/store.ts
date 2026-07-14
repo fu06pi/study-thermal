@@ -25,7 +25,7 @@ interface TimerState {
 export const useTimerStore = create<TimerState>()(
   persist(
     (set) => ({
-      subjectId: "statistics",
+      subjectId: "study",
       mode: "stopwatch",
       status: "idle",
       elapsedSeconds: 0,

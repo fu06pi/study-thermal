@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Maximize2, Pause, Play, RotateCcw, TimerReset } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,12 @@ import { useTimer } from "./use-timer";
 
 export function TimerCard({ subjects }: { subjects: Subject[] }) {
   const timer = useTimer();
+  const { selectSubject, subjectId } = timer;
+  useEffect(() => {
+    if (subjects.length && !subjects.some((subject) => subject.id === subjectId)) {
+      selectSubject(subjects[0].id);
+    }
+  }, [selectSubject, subjectId, subjects]);
 
   return (
     <section className="panel flex min-h-[340px] flex-col justify-between p-6 sm:p-8">
@@ -56,7 +63,7 @@ export function TimerCard({ subjects }: { subjects: Subject[] }) {
         {timer.status === "running" ? (
           <Button variant="primary" onClick={() => void timer.pause()}><Pause size={16} /> Pause</Button>
         ) : (
-          <Button variant="primary" onClick={timer.start}><Play size={16} /> {timer.status === "paused" ? "Resume" : "Start"}</Button>
+          <Button variant="primary" disabled={!subjects.length} onClick={timer.start}><Play size={16} /> {timer.status === "paused" ? "Resume" : "Start"}</Button>
         )}
         <Button onClick={() => void timer.reset()}><RotateCcw size={16} /> Reset</Button>
         <Button
