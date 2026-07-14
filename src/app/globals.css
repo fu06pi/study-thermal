@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: 13 14 19;
+  --panel: 25 26 34;
+  --ink: 241 241 245;
+  --muted: 145 146 158;
+  --accent: 139 140 248;
+  --accent-hex: #8b8cf8;
+}
+
+* { box-sizing: border-box; }
+html { background: rgb(var(--canvas)); }
+body { margin: 0; min-width: 320px; background: transparent; font-family: "Inter Variable", sans-serif; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+::selection { background: rgb(var(--accent) / 0.3); }
+
+@layer components {
+  .panel { @apply rounded-[22px] border border-white/[0.09] bg-panel/75 shadow-panel backdrop-blur-xl; }
+  .header-button { @apply grid h-10 w-10 place-items-center rounded-xl text-muted transition hover:bg-white/[0.07] hover:text-ink; }
+  .setting-row { @apply flex items-center justify-between text-sm text-ink; }
+  .setting-row select { @apply rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 text-xs text-ink outline-none; }
+}
+
+.setting-row input[type="color"] { width: 34px; height: 28px; padding: 2px; border: 1px solid rgb(255 255 255 / 0.1); border-radius: 8px; background: transparent; }
+.setting-row option, select option { background: #191a22; }
+.setting-row + input, aside input[type="text"], aside input[type="number"], aside .grid input { border: 1px solid rgb(255 255 255 / 0.08); border-radius: 10px; background: rgb(255 255 255 / 0.04); padding: 9px 10px; color: rgb(var(--ink)); outline: none; font-size: 12px; }
+.timer-digits { font-variant-numeric: tabular-nums; }
+.activity-scroll > div { min-width: max-content; }
+.react-activity-calendar__legend-colors { color: rgb(var(--muted)); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

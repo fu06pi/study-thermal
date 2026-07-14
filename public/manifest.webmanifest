@@ -1,0 +1,10 @@
+{
+  "name": "Study Thermal",
+  "short_name": "Thermal",
+  "description": "A calm, local-first study timer.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d0e13",
+  "theme_color": "#111219",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
